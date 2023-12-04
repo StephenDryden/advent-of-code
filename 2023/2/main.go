@@ -52,7 +52,7 @@ func main() {
 			log.Fatal(err)
 		}
 	}
-	fmt.Printf("The answer to part 1 is: %v\n", calculateAnswer(games))
+	fmt.Printf("The answer to part 1 is: %v\n", calculateTotalValidGameId(games))
 	fmt.Printf("The answer to part 2 is: %v\n", calculateTotalCubePowers(games))
 }
 
@@ -154,7 +154,7 @@ func validRound(cubes []cube) bool {
 	return true
 }
 
-func calculateAnswer(games []game) (result int) {
+func calculateTotalValidGameId(games []game) (result int) {
 
 	for _, game := range games {
 		if game.isValid {
