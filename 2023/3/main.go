@@ -78,6 +78,7 @@ func parseNumbers(lines map[int]string) []number {
 
 				numberString = numberString + string(v-0)
 
+				// if it's the last number on a line then it's the end of a number
 				if i+1 == len(line) {
 					i, err := strconv.Atoi(numberString)
 					if err != nil {
