@@ -20,6 +20,14 @@ type card struct {
 	numberOfCopies  int
 }
 
+type pack struct {
+	cards []card
+}
+
+type collection struct {
+	packs []pack
+}
+
 var cards []card
 
 func main() {
