@@ -2,23 +2,25 @@ package main
 
 import (
 	"advent-of-code/2023/1/helpers"
+	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 )
 
-const inputLocation = "sample.txt"
+const inputLocation = "input.txt"
 
 type strength int
 type cardValue int
 
 const (
-	FiveOfAKind  strength = 1 // Five of a kind, where all five cards have the same label: AAAAA
-	FourOfAKind  strength = 2 // Four of a kind, where four cards have the same label and one card has a different label: AA8AA
-	FullHouse    strength = 3 // Full house, where three cards have the same label, and the remaining two cards share a different label: 23332
+	FiveOfAKind  strength = 7 // Five of a kind, where all five cards have the same label: AAAAA
+	FourOfAKind  strength = 6 // Four of a kind, where four cards have the same label and one card has a different label: AA8AA
+	FullHouse    strength = 5 // Full house, where three cards have the same label, and the remaining two cards share a different label: 23332
 	ThreeOfAKind strength = 4 // Three of a kind, where three cards have the same label, and the remaining two cards are each different from any other card in the hand: TTT98
-	TwoPair      strength = 5 // Two pair, where two cards share one label, two other cards share a second label, and the remaining card has a third label: 23432
-	OnePair      strength = 6 // One pair, where two cards share one label, and the other three cards have a different label from the pair and each other: A23A4
-	HighCard     strength = 7 // High card, where all cards' labels are distinct: 23456
+	TwoPair      strength = 3 // Two pair, where two cards share one label, two other cards share a second label, and the remaining card has a third label: 23432
+	OnePair      strength = 2 // One pair, where two cards share one label, and the other three cards have a different label from the pair and each other: A23A4
+	HighCard     strength = 1 // High card, where all cards' labels are distinct: 23456
 
 	ace   cardValue = 14
 	king  cardValue = 13
@@ -42,7 +44,7 @@ type card struct {
 }
 
 type hand struct {
-	rank     int
+	raw      string
 	bid      int
 	cards    []card
 	strength strength
@@ -61,8 +63,8 @@ func main() {
 		game.hands = append(game.hands, createHand(line))
 	}
 
-	//game.rankHands()
-	//fmt.Printf("The winnings for Day 1 are: %v", calculateWinnings(game))
+	game.rankHands()
+	fmt.Printf("The winnings for Day 7 part 1 are: %v", calculateWinnings(game))
 }
 
 func createHand(line string) hand {
@@ -75,6 +77,7 @@ func createHand(line string) hand {
 	}
 
 	hand.bid = bid
+	hand.raw = split[0]
 
 	for i, value := range split[0] {
 		var card card
@@ -133,44 +136,92 @@ func (hand *hand) calculateStrength() {
 		count = 0
 	}
 
-	//TODO work out strength
-
-	strength := FiveOfAKind
+	appearsFiveTimes := 0
+	appearsFourTimes := 0
+	appearsThreeTimes := 0
+	appearsTwoTimes := 0
+	appearsOneTime := 0
 	for _, card := range hand.cards {
-		if card.appearancesInHand == 5 {
-			strength = FiveOfAKind
-			break
-		}
-		if card.appearancesInHand == 4 {
-			strength = FourOfAKind
-			break
-		}
-		if card.appearancesInHand == 3 {
-			strength = ThreeOfAKind
-			break
-		}
-		if card.appearancesInHand == 2 {
-			for _, v := range v {
 
-			}
+		switch card.appearancesInHand {
+		case 5:
+			appearsFiveTimes++
+		case 4:
+			appearsFourTimes++
+		case 3:
+			appearsThreeTimes++
+		case 2:
+			appearsTwoTimes++
+		case 1:
+			appearsOneTime++
+
 		}
+
 	}
 
-	hand.strength = strength
+	if appearsFiveTimes == 5 {
+		hand.strength = FiveOfAKind
+	}
+	if appearsFourTimes == 4 {
+		hand.strength = FourOfAKind
+	}
+	if appearsThreeTimes == 3 && appearsTwoTimes == 2 {
+		hand.strength = FullHouse
+	}
+	if appearsThreeTimes == 3 && appearsTwoTimes != 2 {
+		hand.strength = ThreeOfAKind
+	}
+	if appearsTwoTimes == 4 {
+		hand.strength = TwoPair
+	}
+	if appearsTwoTimes == 2 && appearsThreeTimes != 3 {
+		hand.strength = OnePair
+	}
+	if appearsOneTime == 5 {
+		hand.strength = HighCard
+	}
 
 }
 
-// func (game *game) rankHands() {
-// 	rank := 0
-// 	for _, hand := range game.hands {
+func (game *game) rankHands() {
 
-// 	}
-// }
+	sort.Slice(game.hands, func(i, j int) bool {
 
-// func calculateWinnings(game game) int {
-// 	winnings := 0
-// 	for _, hand := range game.hands {
-// 		winnings = winnings + (hand.rank * hand.bid)
-// 	}
-// 	return winnings
-// }
+		if game.hands[i].strength > game.hands[j].strength {
+			return true
+		}
+
+		if game.hands[i].strength == game.hands[j].strength {
+			for y := 0; y < 5; y++ {
+				if game.hands[i].cards[y].value > game.hands[j].cards[y].value {
+					return true
+				}
+				if game.hands[i].cards[y].value < game.hands[j].cards[y].value {
+					return false
+				}
+				if game.hands[i].strength == FiveOfAKind {
+					return game.hands[i].cards[0].value > game.hands[j].cards[0].value
+				}
+			}
+		}
+
+		return false
+	})
+
+}
+
+func calculateWinnings(game game) int {
+	winnings := 0
+
+	rank := len(game.hands)
+	for i := range game.hands {
+
+		fmt.Printf("Rank: %v Strength: %v Hand: %v\n", rank, game.hands[i].strength, game.hands[i].raw)
+
+		winnings = (rank * game.hands[i].bid) + winnings
+		//fmt.Printf("%v + (%v * %v)\n", winnings, rank, game.hands[i].bid)
+		rank--
+	}
+
+	return winnings
+}
