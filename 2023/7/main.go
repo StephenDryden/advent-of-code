@@ -25,7 +25,8 @@ const (
 	ace   cardValue = 14
 	king  cardValue = 13
 	queen cardValue = 12
-	jack  cardValue = 11
+	//jack  cardValue = 11
+	jack  cardValue = 1
 	ten   cardValue = 10
 	nine  cardValue = 9
 	eight cardValue = 8
@@ -86,7 +87,9 @@ func createHand(line string) hand {
 		hand.cards = append(hand.cards, card)
 	}
 
-	hand.calculateStrength()
+	//Uncomment and Part 1
+	//hand.calculateStrength()
+	hand.calculateStrengthWithJokers()
 	return hand
 }
 
@@ -183,6 +186,49 @@ func (hand *hand) calculateStrength() {
 
 }
 
+func (hand *hand) calculateStrengthWithJokers() {
+
+	hand.calculateStrength()
+	numberOfJokers := countJokers(hand)
+	if numberOfJokers > 0 {
+
+		switch hand.strength {
+		case FiveOfAKind:
+			hand.strength = FiveOfAKind
+		case FourOfAKind:
+			hand.strength = FiveOfAKind
+		case FullHouse:
+			hand.strength = FiveOfAKind
+		case ThreeOfAKind:
+			hand.strength = FourOfAKind
+		case TwoPair:
+			if numberOfJokers == 2 {
+				hand.strength = FourOfAKind
+			}
+			if numberOfJokers == 1 {
+				hand.strength = ThreeOfAKind
+			}
+
+		case OnePair:
+			hand.strength = ThreeOfAKind
+		case HighCard:
+			hand.strength = OnePair
+		}
+
+	}
+
+}
+
+func countJokers(hand *hand) (count int) {
+
+	for _, card := range hand.cards {
+		if card.value == jack {
+			return card.appearancesInHand
+		}
+	}
+	return 0
+}
+
 func (game *game) rankHands() {
 
 	sort.Slice(game.hands, func(i, j int) bool {
@@ -199,9 +245,9 @@ func (game *game) rankHands() {
 				if game.hands[i].cards[y].value < game.hands[j].cards[y].value {
 					return false
 				}
-				if game.hands[i].strength == FiveOfAKind {
-					return game.hands[i].cards[0].value > game.hands[j].cards[0].value
-				}
+				// if game.hands[i].strength == FiveOfAKind {
+				// 	return game.hands[i].cards[0].value > game.hands[j].cards[0].value
+				// }
 			}
 		}
 
