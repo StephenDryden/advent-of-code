@@ -11,8 +11,8 @@ Advent of Code Solutions
 | 5   | Not done | Not Done    |
 | 6   | Done     | Done        |
 | 7   | Done     | Nearly Done |
-| 8   | Not done | Nearly Done |
-| 9   | Not done | Not Done    |
+| 8   | Done     | Nearly Done |
+| 9   | Done     | Done        |
 | 10  | Not done | Not Done    |
 | 11  | Not done | Not Done    |
 | 12  | Not done | Not Done    |
