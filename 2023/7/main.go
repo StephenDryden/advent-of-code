@@ -1,7 +1,7 @@
 package main
 
 import (
-	"advent-of-code/2023/1/helpers"
+	"advent-of-code/2023/7/helpers"
 	"fmt"
 	"sort"
 	"strconv"
@@ -206,7 +206,7 @@ func (hand *hand) calculateStrengthWithJokers() {
 				hand.strength = FourOfAKind
 			}
 			if numberOfJokers == 1 {
-				hand.strength = ThreeOfAKind
+				hand.strength = FullHouse
 			}
 
 		case OnePair:

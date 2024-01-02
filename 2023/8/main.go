@@ -1,7 +1,7 @@
 package main
 
 import (
-	"advent-of-code/2023/1/helpers"
+	"advent-of-code/2023/8/helpers"
 	"fmt"
 )
 

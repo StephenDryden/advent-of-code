@@ -1,7 +1,7 @@
 package main
 
 import (
-	"advent-of-code/2023/1/helpers"
+	"advent-of-code/2023/9/helpers"
 	"fmt"
 	"strconv"
 	"strings"
